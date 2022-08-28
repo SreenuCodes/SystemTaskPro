@@ -1,0 +1,37 @@
+package com.systemtask.viewmodel
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.systemtask.di.NetworkRepository
+import com.systemtask.model.UserDetailsItem
+import com.systemtask.utils.DataHandler
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import retrofit2.Response
+import javax.inject.Inject
+
+@HiltViewModel
+class UserDetailsViewModel @Inject constructor(private val networkRepository: NetworkRepository) :
+    ViewModel() {
+    private val _userDetailsList = MutableLiveData<DataHandler<List<UserDetailsItem>>>()
+    val userDetailsList: LiveData<DataHandler<List<UserDetailsItem>>> = _userDetailsList
+
+    fun getUserList() {
+        _userDetailsList.postValue(DataHandler.LOADING())
+        viewModelScope.launch {
+            val response = networkRepository.getUsersList()
+            _userDetailsList.postValue(handleResponse(response))
+        }
+    }
+
+    private fun handleResponse(response: Response<List<UserDetailsItem>>): DataHandler<List<UserDetailsItem>> {
+        if (response.isSuccessful) {
+            response.body()?.let { it ->
+                return DataHandler.SUCCESS(it)
+            }
+        }
+        return DataHandler.ERROR(message = response.errorBody().toString())
+    }
+}

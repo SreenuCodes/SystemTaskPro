@@ -1,0 +1,77 @@
+package com.systemtask.view.fragments
+
+import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.systemtask.R
+import com.systemtask.databinding.FragmentUsersListBinding
+import com.systemtask.utils.Constants.USER_DATA
+import com.systemtask.utils.DataHandler
+import com.systemtask.view.adapter.UsersListAdapter
+import com.systemtask.viewmodel.UserDetailsViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+
+
+@AndroidEntryPoint
+class UsersListFragment : Fragment(R.layout.fragment_users_list) {
+    private val viewModel: UserDetailsViewModel by viewModels()
+
+    @Inject
+    lateinit var usersListAdapter: UsersListAdapter
+
+    private lateinit var binding: FragmentUsersListBinding
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentUsersListBinding.bind(view)
+        init()
+
+        viewModel.userDetailsList.observe(viewLifecycleOwner) { dataHandler ->
+            when (dataHandler) {
+                is DataHandler.SUCCESS -> {
+                    binding.progressBar.visibility = View.GONE
+                    dataHandler.data?.let {
+                        if (it.isEmpty()) {
+                            Toast.makeText(activity, "No users found", Toast.LENGTH_SHORT).show()
+                        } else {
+                            usersListAdapter.updateData(it)
+                        }
+                    }
+                }
+                is DataHandler.ERROR -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(activity, dataHandler.message, Toast.LENGTH_SHORT).show()
+                }
+                is DataHandler.LOADING -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+            }
+
+        }
+        viewModel.getUserList()
+    }
+
+    private fun init() {
+        binding.recyclerView.apply {
+            adapter = usersListAdapter
+            layoutManager = LinearLayoutManager(activity)
+        }
+
+        usersListAdapter.onArticleClicked {
+            val bundle = Bundle().apply {
+                putParcelable(USER_DATA, it)
+
+            }
+            findNavController().navigate(
+                R.id.action_userListFragment_to_userDetailsFragment,
+                bundle
+            )
+        }
+
+    }
+}
