@@ -1,11 +1,13 @@
 package com.systemtask.di
 
+import com.systemtask.BuildConfig
 import com.systemtask.api.UsersDataApi
-import com.systemtask.utils.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -18,8 +20,15 @@ object NetworkModule {
     @Singleton
     @Provides
     fun providesRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl(BASE_URL)
+        val httpClient = OkHttpClient.Builder()
+        if (BuildConfig.DEBUG) {
+            val interceptor = HttpLoggingInterceptor()
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+            httpClient.addInterceptor(interceptor)
+        }
+        return Retrofit.Builder().baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .client(httpClient.build())
             .build()
     }
 

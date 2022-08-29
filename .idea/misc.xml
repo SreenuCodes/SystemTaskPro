@@ -6,6 +6,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2109375" />
         <entry key="app/src/main/res/layout/adapter_news_item.xml" value="0.2109375" />
         <entry key="app/src/main/res/layout/fragment_users_details.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_users_list.xml" value="0.1" />
         <entry key="app/src/main/res/layout/user_info_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/users_details_fragment.xml" value="0.2109375" />
       </map>

@@ -4,11 +4,11 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.systemtask.api.UsersDataApi
 import com.systemtask.di.NetworkRepository
 import com.systemtask.model.UserDetailsItem
-import junit.framework.Assert.assertEquals
+import junit.framework.Assert.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Rule
@@ -22,8 +22,8 @@ import retrofit2.Response
 
 @ExperimentalCoroutinesApi
 @RunWith(JUnit4::class)
-class MainViewModelTest {
-    private val testDispatcher = TestCoroutineDispatcher()
+class UserDetailsViewModelTest {
+    private val testDispatcher = UnconfinedTestDispatcher()
     lateinit var viewModel: UserDetailsViewModel
     lateinit var networkRepository: NetworkRepository
 
@@ -35,7 +35,7 @@ class MainViewModelTest {
 
     @Before
     fun setup() {
-        MockitoAnnotations.initMocks(this)
+        MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
         networkRepository = NetworkRepository(usersDataApi)
         viewModel = UserDetailsViewModel(networkRepository)
@@ -60,9 +60,33 @@ class MainViewModelTest {
                 )
             viewModel.getUserList()
             val result = viewModel.userDetailsList.value
-            assertEquals(UserDetailsItem("Jhon@gmail.com", "Male", 12345, "Jhon", "Active"), result)
-
+            assertEquals(
+                UserDetailsItem("Jhon@gmail.com", "Male", 12345, "Jhon", "Active"),
+                result?.data?.get(0)
+            )
         }
 
+    }
+
+    @Test
+    fun `empty users list test`() {
+        runBlocking {
+            Mockito.`when`(networkRepository.getUsersList())
+                .thenReturn(Response.success(listOf<UserDetailsItem>()))
+            viewModel.getUserList()
+            val result = viewModel.userDetailsList.value
+            assertTrue(result?.data?.isEmpty() == true)
+        }
+    }
+
+    @Test
+    fun `users list is null test`() {
+        runBlocking {
+            Mockito.`when`(networkRepository.getUsersList())
+                .thenReturn(null)
+            viewModel.getUserList()
+            val result = viewModel.userDetailsList.value
+            assertNull(result?.data)
+        }
     }
 }

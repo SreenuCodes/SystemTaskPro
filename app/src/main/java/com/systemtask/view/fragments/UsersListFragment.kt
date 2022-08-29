@@ -35,11 +35,15 @@ class UsersListFragment : Fragment(R.layout.fragment_users_list) {
             when (dataHandler) {
                 is DataHandler.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
-                    dataHandler.data?.let {
-                        if (it.isEmpty()) {
-                            Toast.makeText(activity, "No users found", Toast.LENGTH_SHORT).show()
+                    dataHandler.data?.let { usersList ->
+                        if (usersList.isEmpty()) {
+                            Toast.makeText(
+                                activity,
+                                getString(R.string.user_not_found),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
-                            usersListAdapter.updateData(it)
+                            usersListAdapter.differ.submitList(usersList)
                         }
                     }
                 }
@@ -47,9 +51,7 @@ class UsersListFragment : Fragment(R.layout.fragment_users_list) {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(activity, dataHandler.message, Toast.LENGTH_SHORT).show()
                 }
-                is DataHandler.LOADING -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                }
+                is DataHandler.LOADING -> binding.progressBar.visibility = View.VISIBLE
             }
 
         }

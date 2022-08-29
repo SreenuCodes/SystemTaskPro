@@ -28,8 +28,8 @@ class UserDetailsViewModel @Inject constructor(private val networkRepository: Ne
 
     private fun handleResponse(response: Response<List<UserDetailsItem>>): DataHandler<List<UserDetailsItem>> {
         if (response.isSuccessful) {
-            response.body()?.let { it ->
-                return DataHandler.SUCCESS(it)
+            response.body()?.let { usersList ->
+                return DataHandler.SUCCESS(usersList)
             }
         }
         return DataHandler.ERROR(message = response.errorBody().toString())

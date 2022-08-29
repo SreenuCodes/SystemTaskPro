@@ -13,4 +13,27 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="MainViewStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="GlobalTextViewStyle" parent="MainViewStyle">
+        <item name="android:textSize">@dimen/dimen_20sp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="GlobalRecyclerViewStyle">
+        <item name="android:layout_width">@dimen/dimen_0dp</item>
+        <item name="android:layout_height">@dimen/dimen_0dp</item>
+    </style>
+
+    <style name="DividerStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dimen_1dp</item>
+        <item name="android:background">@android:color/darker_gray</item>
+    </style>
+
+
 </resources>

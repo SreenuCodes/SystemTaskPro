@@ -14,13 +14,13 @@ class UserDetailsFragment : Fragment(R.layout.fragment_users_details) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentUsersDetailsBinding.bind(view)
         val userData = args.userData
-        userData?.let {
+        userData?.let { user ->
             binding.apply {
-                tvName.text = it.name
-                tvGender.text = it.gender
-                tvId.text = it.id.toString()
-                tvStatus.text = it.status
-                tvEmail.text = it.email
+                tvName.text = user.name
+                tvGender.text = user.gender
+                tvId.text = user.id.toString()
+                tvStatus.text = user.status
+                tvEmail.text = user.email
             }
         }
 

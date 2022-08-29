@@ -20,14 +20,18 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildFeatures{
+    buildFeatures {
         viewBinding true
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "BASE_URL", "\"https://gorest.co.in/public/\""
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://gorest.co.in/public/\""
         }
     }
     compileOptions {
@@ -68,7 +72,6 @@ dependencies {
     testImplementation 'androidx.arch.core:core-testing:2.1.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation "org.mockito:mockito-core:3.3.3"
-
 
 
 }
